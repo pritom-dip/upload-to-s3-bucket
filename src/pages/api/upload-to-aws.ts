@@ -1,4 +1,5 @@
 import s3 from '@/utils/awsClient';
+import deleteImageFromAws from '@/utils/deleteImageFromAws';
 import getSignedUrlFromAws from '@/utils/getSignedUrlFromAws';
 import { PutObjectCommand } from '@aws-sdk/client-s3';
 import multer from 'multer';
@@ -72,6 +73,9 @@ export default async function handler(
   if (error) return res.status(500).json({ message: 'Error uploading file' });
 
   const signedUrl = await getSignedUrlFromAws(key);
+
+  // If you want to delete the image from AWS S3
+  // const deleteImage = await deleteImageFromAws(key);
 
   res.status(200).json({ success: true, data: signedUrl });
 }

@@ -48,6 +48,7 @@ export default function Home() {
     const formData = new FormData();
     formData.append('file', image);
     await uploadImage(formData);
+    formData.delete('file');
   };
 
   return (
