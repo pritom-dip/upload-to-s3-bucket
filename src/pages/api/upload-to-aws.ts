@@ -1,4 +1,5 @@
 import s3 from '@/utils/awsClient';
+import getSignedUrlFromAws from '@/utils/getSignedUrlFromAws';
 import { PutObjectCommand } from '@aws-sdk/client-s3';
 import multer from 'multer';
 import type { NextApiRequest, NextApiResponse } from 'next';
@@ -70,5 +71,7 @@ export default async function handler(
 
   if (error) return res.status(500).json({ message: 'Error uploading file' });
 
-  res.status(200).json({ success: true, data: key });
+  const signedUrl = await getSignedUrlFromAws(key);
+
+  res.status(200).json({ success: true, data: signedUrl });
 }
