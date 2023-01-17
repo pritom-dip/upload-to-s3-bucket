@@ -3,7 +3,6 @@ import Image from 'next/image';
 import { Inter } from '@next/font/google';
 import styles from '@/styles/Home.module.css';
 import { useCallback, useState } from 'react';
-import { useDropzone } from 'react-dropzone';
 import Dropzone from 'react-dropzone';
 import styled from 'styled-components';
 import useMutation from '@/hooks/useMutation';
@@ -32,7 +31,7 @@ const StyledButton = styled.button`
   cursor: pointer;
 `;
 
-const url = '/api/upload';
+const url = '/api/upload-to-aws';
 
 export default function Home() {
   const [image, setImage] = useState(null);
@@ -40,15 +39,15 @@ export default function Home() {
 
   const onDrop = useCallback(async (acceptedFiles: any) => {
     const file = acceptedFiles[0];
-    const formData = new FormData();
-    formData.append('file', file);
-
-    await uploadImage(formData);
+    setImage(file);
   }, []);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     if (!image) return;
+    const formData = new FormData();
+    formData.append('file', image);
+    await uploadImage(formData);
   };
 
   return (
@@ -62,17 +61,18 @@ export default function Home() {
       <main className={styles.main}>
         <div>
           <h1>Upload Image</h1>
-
-          <Dropzone onDrop={onDrop}>
-            {({ getRootProps, getInputProps }) => (
-              <section>
-                <StyledDiv {...getRootProps()}>
-                  <input {...getInputProps()} />
-                  <p>Drag & drop some files here, or click to select files</p>
-                </StyledDiv>
-              </section>
-            )}
-          </Dropzone>
+          <StyledDiv>
+            <Dropzone onDrop={onDrop}>
+              {({ getRootProps, getInputProps }) => (
+                <section>
+                  <div {...getRootProps()}>
+                    <input {...getInputProps()} />
+                    <p>Drag & drop some files here, or click to select files</p>
+                  </div>
+                </section>
+              )}
+            </Dropzone>
+          </StyledDiv>
 
           <StyledButton onClick={handleSubmit}>Submit</StyledButton>
         </div>
