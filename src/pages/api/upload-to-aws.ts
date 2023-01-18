@@ -4,10 +4,11 @@ import getSignedUrlFromAws from '@/utils/getSignedUrlFromAws';
 import { PutObjectCommand } from '@aws-sdk/client-s3';
 import multer from 'multer';
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { Readable } from 'stream';
 import { v4 as uuid } from 'uuid';
 
 interface NextApiRequestWithFile extends NextApiRequest {
-  file: any;
+  file: Readable | ReadableStream | Blob;
 }
 
 const BUCKET = process.env.BUCKET;
@@ -62,7 +63,7 @@ export default async function handler(
 ) {
   await runMiddleware(req, res, upload.single('file'));
 
-  const { body, file } = req;
+  const { file } = req;
 
   if (!file) return res.status(400).json({ message: 'No file uploaded' });
 
